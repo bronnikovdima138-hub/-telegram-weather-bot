@@ -122,13 +122,18 @@ async def main() -> None:
     hook_url = f"{base}/{TELEGRAM_BOT_TOKEN}"
     logger.info("Starting webhook on 0.0.0.0:%s with url %s", PORT, hook_url)
 
-    await app.initialize()  # добавили эту строчку
+    await app.initialize()  # PTB v20 требует initialize() перед start()
     await app.start()
     await app.bot.set_webhook(hook_url)
     await app.updater.start_webhook(
         listen="0.0.0.0",
-        port=PORT,
-        url_path=TELEGRAM_BOT_TOKEN,
+        port=PORT,                  # Render передаст правильный $PORT
+        url_path=TELEGRAM_BOT_TOKEN
+    )
+    await app.updater.wait_until_closed()
+else:
+    logger.info("Starting in polling mode (no WEBHOOK_URL set)...")
+    await app.run_polling(close_loop=False)
     )
     await app.updater.wait_until_closed()
 else:

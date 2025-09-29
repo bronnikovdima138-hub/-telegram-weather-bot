@@ -119,12 +119,15 @@ async def main() -> None:
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    if WEBHOOK_URL:
-        base = WEBHOOK_URL.rstrip('/')
+        # Нормализуем URL и логируем параметры окружения
+    url = (WEBHOOK_URL or "").strip()
+    logger.info("Env check: WEBHOOK_URL=%r, PORT=%s", url, PORT)
+
+    if url:
+        base = url.rstrip('/')
         hook_url = f"{base}/{TELEGRAM_BOT_TOKEN}"
         logger.info("Starting webhook on 0.0.0.0:%s with url %s", PORT, hook_url)
 
-        # ВАЖНО для PTB v20: initialize() перед start()
         await app.initialize()
         await app.start()
         await app.bot.set_webhook(hook_url)
@@ -135,7 +138,7 @@ async def main() -> None:
         )
         await app.updater.wait_until_closed()
     else:
-        logger.info("Starting in polling mode (no WEBHOOK_URL set)...")
+        logger.info("Starting in polling mode (no WEBHOOK_URL set or blank after strip)...")
         await app.run_polling(close_loop=False)
 
 

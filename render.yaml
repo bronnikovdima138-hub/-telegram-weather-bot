@@ -7,9 +7,9 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python main.py
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: TELEGRAM_BOT_TOKEN
-        sync: false  # set in Render dashboard
+        sync: false  # хранится в Render → Environment
       - key: WEBHOOK_URL
-        sync: false  # set to https://<your-service>.onrender.com after first deploy
-      - key: PORT
-        value: 10000  # Render sets PORT automatically; this default is fine
+        sync: false  # https://telegram-weather-bot-i1y8.onrender.com

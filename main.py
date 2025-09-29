@@ -118,16 +118,22 @@ async def main() -> None:
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     if WEBHOOK_URL:
-        base = WEBHOOK_URL.rstrip('/')
-        hook_url = f"{base}/{TELEGRAM_BOT_TOKEN}"
-        logger.info("Starting webhook on 0.0.0.0:%s with url %s", PORT, hook_url)
-        await app.start()
-        await app.bot.set_webhook(hook_url)
-        await app.updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TELEGRAM_BOT_TOKEN)
-        await app.updater.wait_until_closed()
-    else:
-        logger.info("Starting in polling mode (no WEBHOOK_URL set)...")
-        await app.run_polling(close_loop=False)
+    base = WEBHOOK_URL.rstrip('/')
+    hook_url = f"{base}/{TELEGRAM_BOT_TOKEN}"
+    logger.info("Starting webhook on 0.0.0.0:%s with url %s", PORT, hook_url)
+
+    await app.initialize()  # добавили эту строчку
+    await app.start()
+    await app.bot.set_webhook(hook_url)
+    await app.updater.start_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TELEGRAM_BOT_TOKEN,
+    )
+    await app.updater.wait_until_closed()
+else:
+    logger.info("Starting in polling mode (no WEBHOOK_URL set)...")
+    await app.run_polling(close_loop=False)
 
 
 if __name__ == "__main__":

@@ -12,4 +12,4 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         sync: false  # хранится в Render → Environment
       - key: WEBHOOK_URL
-        sync: false  # https://telegram-weather-bot-i1y8.onrender.com
+        sync: false  # https://telegram-weather-bot-i1y8.onrender.com (без слеша)
